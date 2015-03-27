@@ -88,7 +88,7 @@ public class UnitTestClass {
 //                    CharArraySet set = new CharArraySet(, true);
 
                     StandardAnalyzer analysis = new StandardAnalyzer(
-                            new FileReader(new File("C:/Users/Admin/Desktop/stopwordsen.txt")));
+                            new FileReader(new File("stopwordsen.txt")));
 
 //                    StandardAnalyzer analysis = new StandardAnalyzer(
 //                            new FileReader(new File("C:/Users/Admin/Desktop/stopwordsen.txt")));
