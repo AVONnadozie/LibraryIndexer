@@ -5,8 +5,6 @@
  */
 public class Main {
 
-    public static MainWindow window;
-
     public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting">        
@@ -27,15 +25,17 @@ public class Main {
 
         /* Create and display the form when ready*/
         java.awt.EventQueue.invokeLater(() -> {
-            window = new MainWindow();
+            MainWindow window = MainWindow.getInstance();
             Utility.centreOnScreen(window);
             window.setVisible(true);
         });
 
     }
 
-    public static MainWindow getMainWindow() {
-        return window;
+    public static void closeApp(){
+        MainWindow.getInstance().setVisible(false);
+        
+        System.exit(0);
     }
-
+    
 }

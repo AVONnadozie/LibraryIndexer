@@ -52,11 +52,11 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="authorLabel" pref="148" max="32767" attributes="0"/>
+                          <Component id="authorLabel" pref="160" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="typeLabel" pref="59" max="32767" attributes="0"/>
+                          <Component id="typeLabel" pref="72" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="viewMaterialButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -94,15 +94,6 @@
             <Property name="text" type="java.lang.String" value="Type:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="viewMaterialButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="View"/>
-            <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="viewMaterialButtonActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JLabel" name="authorLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="&lt;Author&gt;"/>
@@ -116,7 +107,6 @@
         <Component class="javax.swing.JButton" name="readMaterialButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Read"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="readMaterialButtonActionPerformed"/>
@@ -132,10 +122,18 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Author:"/>
+            <Property name="text" type="java.lang.String" value="by"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
+        </Component>
+        <Component class="javax.swing.JButton" name="viewMaterialButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="View"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="viewMaterialButtonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

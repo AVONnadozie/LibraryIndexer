@@ -45,30 +45,10 @@ public class Utility {
     }
 
     /**
-     * Provide regular expressions that match allowed eBook formats
      *
-     * @return
+     * @return Index folder location
      */
-    public static String getAllowedEBookExtentions() {
-        return "((.[Dd][Oo][Cc][Xx]?)|(.[Pp][Dd][Ff])|(.[Tt][Xx][Tt])|(.[Pp]{2}[Tt][Xx]?))";
-    }
-
-    /**
-     * Provide regular expressions that match allowed music and video formats
-     *
-     * @return
-     */
-    public static String getAllowedCDExtentions() {
-        return "((.[Mm][Pp][34])|(.[Ff][Ll][Vv])|(.[Aa][Vv][Ii]))";
-    }
-
-    /**
-     * Provide regular expressions that match all allowed formats for library
-     * materials
-     *
-     * @return
-     */
-    public static String getAllowedMaterialsExtensions() {
-        return "(" + getAllowedEBookExtentions() + "|" + getAllowedCDExtentions() + ")";
+    public static String getIndexFolderLocation() {
+        return "indexer_files"; //root folder
     }
 }

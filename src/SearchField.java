@@ -1,7 +1,9 @@
 
 public enum SearchField {
+
     ALL,
     CONTENT,
     AUTHOR,
-    TITLE
+    TITLE,
+    ISBN
 }

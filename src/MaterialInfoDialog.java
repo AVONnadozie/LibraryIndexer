@@ -1,8 +1,10 @@
 
 import java.awt.Desktop;
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,66 +26,75 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
 //        super.paint(g2);
 //        g2.dispose();
 //    }
-    public static void showDialog(HashMap<IndexField, String> result) {
-        MaterialInfoDialog dialog = new MaterialInfoDialog(Main.getMainWindow(), true);
-        Utility.centreOnParent(Main.getMainWindow(), dialog);
-        dialog.setInfo(result);
+    public static void showDialog(Frame parent, Material material) {
+        MaterialInfoDialog dialog = new MaterialInfoDialog(MainWindow.getInstance(), true);
+        Utility.centreOnParent(parent, dialog);
+        dialog.setInfo(material);
         dialog.setVisible(true);
     }
 
-    private void setInfo(HashMap<IndexField, String> result) {
-        int maxWindowtextWidth = 100;
-        for (IndexField value : IndexField.values()) {
+    private void setInfo(Material material) {
+        int maxWindowtextWidth = 70;
+        try {
+            String preview = Database.getMaterialPreview(material.getPath().toString());
+            if (preview.isEmpty()) {
+                previewTextArea.setText("No Preview Available.");
+            } else {
+                previewTextArea.setText(preview);
+            }
+        } catch (InterruptedException | ExecutionException | NumberFormatException | NullPointerException ex) {
+            previewTextArea.setText("No Preview Available.");
+            Utility.writeLog(ex);
+        }
+
+        for (IndexFields value : IndexFields.values()) {
             switch (value) {
-                case ID:
-                    try {
-                        int id = Integer.parseInt(result.get(IndexField.ID));
-                        String preview = DBConnection.getMaterialPreview(id);
-                        if (preview.isEmpty()) {
-                            previewTextArea.setText("No Preview Available.");
-                        } else {
-                            previewTextArea.setText(preview);
-                        }
-                    } catch (InterruptedException | ExecutionException | NumberFormatException | NullPointerException ex) {
-                        previewTextArea.setText("No Preview Available.");
-                        Utility.writeLog(ex);
-                    }
-                    break;
                 case CONTENT:
                     break;
                 case TITLE:
-                    StringBuilder title = new StringBuilder(result.get(IndexField.TITLE));
-//                    if (title.length() > maxWindowtextWidth) {
-//                        title.insert(maxWindowtextWidth, "<br>");
-//                    }
+                    StringBuilder title = new StringBuilder(material.getTitle());
+                    if (title.length() > maxWindowtextWidth) {
+                        title.insert(maxWindowtextWidth, "<br>");
+                    }
                     titleLabel.setText("<html>" + title);
                     break;
                 case PATH:
-                    path = result.getOrDefault(value, "");
-                    if (path.isEmpty() || !(new File(path).exists())) {
-                        openMaterialButton.setVisible(false);
+                    path = material.getPath().toString();
+                     {
+                        try {
+                            if (!(new File(new URI(path)).isFile())) {
+                                openMaterialButton.setVisible(false);
+                            }
+                        } catch (URISyntaxException ex) {
+                            Utility.writeLog(ex);
+                        }
                     }
                     break;
                 case AUTHOR:
-                    StringBuilder author = new StringBuilder(result.get(IndexField.AUTHOR));
-//                    if (author.length() > maxWindowtextWidth) {
-//                        author.insert(maxWindowtextWidth, "<br>");
-//                    }
+                    StringBuilder author = new StringBuilder(material.getAuthor());
+                    if (author.length() > maxWindowtextWidth) {
+                        author.insert(maxWindowtextWidth, "<br>");
+                    }
                     authorLabel.setText("<html>" + author);
                     break;
                 case KEYWORDS:
                     break;
-                case LOCATION_IN_LIBRARY:
-                    StringBuilder location = new StringBuilder(result.get(IndexField.LOCATION_IN_LIBRARY));
-//                    if (location.length() > maxWindowtextWidth) {
-//                        location.insert(maxWindowtextWidth, "<br>");
-//                    }
-                    locationLabel.setText("<html>" + location);
-                    break;
                 case CREATION_DATE:
                     break;
                 case TYPE:
-                    typeLabel.setText(result.get(IndexField.TYPE));
+                    MaterialType type = material.getType();
+                    switch (type) {
+                        case EBOOK:
+                            typeLabel.setText(type.name() + " | ISBN: " + material.getISBN());
+                            break;
+                        case CD:
+                            typeLabel.setText(type.name());
+                            break;
+                        default:
+                            throw new AssertionError(type.name());
+                    }
+                    break;
+                case ISBN:
                     break;
                 default:
                     throw new AssertionError(value.name());
@@ -105,13 +116,12 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         authorLabel = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        locationLabel = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         typeLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Info.");
+        setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(420, 442));
 
@@ -146,11 +156,6 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
 
         authorLabel.setText("<Author in html>");
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel6.setText("Location in Library");
-
-        locationLabel.setText("<Location in html>");
-
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel8.setText("Type of Material:");
 
@@ -163,22 +168,19 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
                     .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(authorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(locationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(typeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jLabel3)
+                        .addGap(0, 420, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(openMaterialButton)))
+                        .addComponent(openMaterialButton))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -193,17 +195,13 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authorLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(locationLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(typeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(openMaterialButton)
                 .addContainerGap())
@@ -213,7 +211,7 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,11 +237,9 @@ public class MaterialInfoDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel locationLabel;
     private javax.swing.JButton openMaterialButton;
     private javax.swing.JTextArea previewTextArea;
     private javax.swing.JLabel titleLabel;
