@@ -293,6 +293,8 @@ public final class MainWindow extends javax.swing.JFrame {
         int index = fieldComboBox.getSelectedIndex();
 
         switch (index) {
+            case 4:
+                return SearchField.ISBN;
             case 3:
                 return SearchField.TITLE;
             case 2:

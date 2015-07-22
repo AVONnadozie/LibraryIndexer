@@ -1,5 +1,9 @@
 
-import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 /*
  * Copyright (C) 2015 Victor Anuebunwa
@@ -24,8 +28,15 @@ import java.io.File;
 public class TestClass {
 
     public static void main(String args[]) {
-        File f = new File("library.sql");
-        System.out.println(f.toURI().toString());
+        try {
+            User u = User.getInstance();
+            List<Material> result = u.query("Coursera", SearchCategory.ALL, SearchField.AUTHOR);
+            result.stream().forEach((r) -> {
+                System.out.println(r);
+            });
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(TestClass.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
